@@ -46,7 +46,7 @@ type Template struct {
 }
 
 // NewTemplate creates a new html/template with templates in config dir and given functions registered by the FuncMapMappings
-func NewTemplate(config *ModuleConfig) func(funcs FuncMapMappings) (TemplateQualifier, error) {
+func NewTemplate(config *Config) func(funcs FuncMapMappings) (TemplateQualifier, error) {
 	return func(funcs FuncMapMappings) (TemplateQualifier, error) {
 		funcMap := template.FuncMap{}
 

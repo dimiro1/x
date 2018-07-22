@@ -30,25 +30,25 @@ import (
 	"go.uber.org/fx"
 )
 
-// ModuleConfig holds module config
-type ModuleConfig struct {
+// Config holds module config
+type Config struct {
 	RootDir   string
 	Extension string
 }
 
 // Option used to update config values
-type Option func(*ModuleConfig)
+type Option func(*Config)
 
-// RootDir option to set the RootDir value on the ModuleConfig struct.
+// RootDir option to set the RootDir value on the Config struct.
 func RootDir(rootDir string) Option {
-	return Option(func(m *ModuleConfig) {
+	return Option(func(m *Config) {
 		m.RootDir = rootDir
 	})
 }
 
-// Extension option to set the Extension value on the ModuleConfig struct.
+// Extension option to set the Extension value on the Config struct.
 func Extension(ext string) Option {
-	return Option(func(m *ModuleConfig) {
+	return Option(func(m *Config) {
 		m.Extension = ext
 	})
 }
@@ -57,7 +57,7 @@ func Extension(ext string) Option {
 //
 // fx.New(xtemplate.Module(xtemplate.RootDir("./templates")))
 func Module(options ...Option) fx.Option {
-	cfg := &ModuleConfig{
+	cfg := &Config{
 		RootDir:   "templates",
 		Extension: ".html",
 	}
