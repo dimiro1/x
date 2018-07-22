@@ -45,14 +45,17 @@ type Template struct {
 	Template *template.Template `name:"x_template"`
 }
 
+// NewTemplate creates a new html/template with templates in config dir and given functions registered by the FuncMapMappings
 func NewTemplate(config *ModuleConfig) func(funcs FuncMapMappings) (TemplateQualifier, error) {
 	return func(funcs FuncMapMappings) (TemplateQualifier, error) {
 		funcMap := template.FuncMap{}
 
+		// converts the FuncMapMappings into a template.FuncMap
 		for _, f := range funcs.Functions {
 			funcMap[f.Name] = f.Func
 		}
 
+		// actual work
 		tmpl, err := parseTemplates(config.RootDir, funcMap, config.Extension)
 
 		return TemplateQualifier{

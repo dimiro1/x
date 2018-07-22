@@ -19,17 +19,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+// xtemplate provides html/templates
+//
+// this module is different from the others because, this one uses a static configuration into the module itself and
+// does not load configs from env vars, I have made this decision because usually the location of templates is defined at
+// compilation time and not at runtime.
 package xtemplate
 
 import (
 	"go.uber.org/fx"
 )
 
+// ModuleConfig holds module config
 type ModuleConfig struct {
 	RootDir   string
 	Extension string
 }
 
+// Option used to update config values
 type Option func(*ModuleConfig)
 
 // RootDir option to set the RootDir value on the ModuleConfig struct.

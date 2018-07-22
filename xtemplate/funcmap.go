@@ -37,6 +37,7 @@ type FuncMapping struct {
 	Func *Func `group:"x_template_funcmap_mappings"`
 }
 
+// FuncMapMappings gets populated by the container with all the FuncMapping regostered in the given group
 type FuncMapMappings struct {
 	fx.In
 
