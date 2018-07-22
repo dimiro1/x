@@ -60,6 +60,9 @@ func main() {
 }
 ```
 
+# The name
+
+`x` in math means multiplication, so, `x` in this library means that your productivity will be increased by multiple times.
 
 # THANKS
 
