@@ -1,4 +1,4 @@
-// Copyright (x) 2018 Claudemiro Alves Feitosa Neto
+// Copyright (c) 2018 Claudemiro Alves Feitosa Neto
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
