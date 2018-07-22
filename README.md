@@ -20,7 +20,7 @@ import (
 type IndexMiddleware struct {
 	fx.In
 
-	Compress xhttp.Middleware `name:"hf_compress_middleware"`
+	Compress xhttp.Middleware `name:"x_compress_middleware"`
 }
 
 // Handler using the compress middleware

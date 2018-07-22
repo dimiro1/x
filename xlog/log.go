@@ -37,13 +37,13 @@ type Config struct {
 type LoggerMapping struct {
 	fx.Out
 
-	Logger *log.Logger `name:"hf_logger"`
+	Logger *log.Logger `name:"x_logger"`
 }
 
 type Logger struct {
 	fx.In
 
-	Logger *log.Logger `name:"hf_logger"`
+	Logger *log.Logger `name:"x_logger"`
 }
 
 // LoadConfig create a new *Config and populate it with values from environment.

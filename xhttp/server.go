@@ -55,21 +55,21 @@ func LoadConfig() *Config {
 type RouteMappings struct {
 	fx.In
 
-	Routes []*Route `group:"hf_route_mappings"`
+	Routes []*Route `group:"x_route_mappings"`
 }
 
 // HTTPServerQualifier is necessary to give a name to the server
 type HTTPServerQualifier struct {
 	fx.Out
 
-	Server *http.Server `name:"hf_http_server"`
+	Server *http.Server `name:"x_http_server"`
 }
 
 // HTTPServer ir necessary to access the server by name
 type HTTPServer struct {
 	fx.In
 
-	Server *http.Server `name:"hf_http_server"`
+	Server *http.Server `name:"x_http_server"`
 }
 
 // Start starts the Server.

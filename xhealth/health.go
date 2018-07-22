@@ -44,21 +44,21 @@ type Checker struct {
 type CheckMapping struct {
 	fx.Out
 
-	Checker *Checker `group:"hf_health"`
+	Checker *Checker `group:"x_health"`
 }
 
 // HealthHandlerQualifier is necessary to give a name to the health check
 type HealthHandlerQualifier struct {
 	fx.Out
 
-	Handler health.Handler `name:"hf_healthcheck"`
+	Handler health.Handler `name:"x_healthcheck"`
 }
 
 // HealthHandler ir necessary to access the healthcheck by name
 type HealthHandler struct {
 	fx.In
 
-	Handler health.Handler `name:"hf_healthcheck"`
+	Handler health.Handler `name:"x_healthcheck"`
 }
 
 // Config holds health check configuration.
@@ -83,7 +83,7 @@ func LoadConfig() *Config {
 type ChecksMappings struct {
 	fx.In
 
-	Checks []*Checker `group:"hf_health"`
+	Checks []*Checker `group:"x_health"`
 }
 
 // ProvideRouteMapping provide and Server HTTP Route to be registered by the server module.

@@ -29,7 +29,7 @@ import (
 type CompressQualifier struct {
 	fx.Out
 
-	Middleware Middleware `name:"hf_compress_middleware"`
+	Middleware Middleware `name:"x_compress_middleware"`
 }
 
 func NewCompress() CompressQualifier {

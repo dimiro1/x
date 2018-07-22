@@ -53,5 +53,5 @@ func (r *Route) String() string {
 type RouteMapping struct {
 	fx.Out
 
-	Route *Route `group:"hf_route_mappings"`
+	Route *Route `group:"x_route_mappings"`
 }
