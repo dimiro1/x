@@ -50,14 +50,6 @@ func LoadConfig() *Config {
 	}
 }
 
-// RouteMappings group routes to be registered by the Server.
-// It is populated by the container with all routes from the group `routes`
-type RouteMappings struct {
-	fx.In
-
-	Routes []*Route `group:"x_route_mappings"`
-}
-
 // HTTPServerQualifier is necessary to give a name to the server
 type HTTPServerQualifier struct {
 	fx.Out

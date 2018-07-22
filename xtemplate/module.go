@@ -19,47 +19,49 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package xhttp
+package xtemplate
 
 import (
-	"fmt"
-	"net/http"
-
 	"go.uber.org/fx"
 )
 
-// Route holds everything the router needs to know to register a route into the container
-type Route struct {
-	// Method HTTP Method which the route must accept
-	Method string
-
-	// Path is the URL path
-	// e.g: /hello/{name}
-	Path string
-
-	// Middleware a list of middleware that must be applied
-	Middleware []Middleware
-
-	// Handler the standard go HTTP handler
-	Handler http.Handler
+type ModuleConfig struct {
+	RootDir   string
+	Extension string
 }
 
-// String returns a string representation of the route
-func (r *Route) String() string {
-	return fmt.Sprintf("%s %s", r.Method, r.Path)
+type Option func(*ModuleConfig)
+
+// RootDir option to set the RootDir value on the ModuleConfig struct.
+func RootDir(rootDir string) Option {
+	return Option(func(m *ModuleConfig) {
+		m.RootDir = rootDir
+	})
 }
 
-// RouteMapping Necessary to register more than one Route
-type RouteMapping struct {
-	fx.Out
-
-	Route *Route `group:"x_route_mappings"`
+// Extension option to set the Extension value on the ModuleConfig struct.
+func Extension(ext string) Option {
+	return Option(func(m *ModuleConfig) {
+		m.Extension = ext
+	})
 }
 
-// RouteMappings group routes to be registered by the Server.
-// It is populated by the container with all routes from the group `routes`
-type RouteMappings struct {
-	fx.In
+// Module provides a html/template fully configured.
+//
+// fx.New(xtemplate.Module(xtemplate.RootDir("./templates")))
+func Module(options ...Option) fx.Option {
+	cfg := &ModuleConfig{
+		RootDir:   "templates",
+		Extension: ".html",
+	}
 
-	Routes []*Route `group:"x_route_mappings"`
+	for _, option := range options {
+		option(cfg)
+	}
+
+	return fx.Options(
+		fx.Provide(
+			NewTemplate(cfg),
+		),
+	)
 }

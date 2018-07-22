@@ -19,47 +19,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package xhttp
+package xtemplate
 
 import (
-	"fmt"
-	"net/http"
-
 	"go.uber.org/fx"
 )
 
-// Route holds everything the router needs to know to register a route into the container
-type Route struct {
-	// Method HTTP Method which the route must accept
-	Method string
-
-	// Path is the URL path
-	// e.g: /hello/{name}
-	Path string
-
-	// Middleware a list of middleware that must be applied
-	Middleware []Middleware
-
-	// Handler the standard go HTTP handler
-	Handler http.Handler
+type Func struct {
+	Name string
+	Func interface{}
 }
 
-// String returns a string representation of the route
-func (r *Route) String() string {
-	return fmt.Sprintf("%s %s", r.Method, r.Path)
-}
-
-// RouteMapping Necessary to register more than one Route
-type RouteMapping struct {
+// FuncMapping Necessary to register more than one Func
+type FuncMapping struct {
 	fx.Out
 
-	Route *Route `group:"x_route_mappings"`
+	Func *Func `group:"x_template_funcmap_mappings"`
 }
 
-// RouteMappings group routes to be registered by the Server.
-// It is populated by the container with all routes from the group `routes`
-type RouteMappings struct {
+type FuncMapMappings struct {
 	fx.In
 
-	Routes []*Route `group:"x_route_mappings"`
+	Functions []*Func `group:"x_template_funcmap_mappings"`
 }
