@@ -51,14 +51,14 @@ type CheckMapping struct {
 type HealthHandlerQualifier struct {
 	fx.Out
 
-	Handler health.Handler `name:"x_healthcheck"`
+	Handler *health.Handler `name:"x_healthcheck"`
 }
 
 // HealthHandler ir necessary to access the healthcheck by name
 type HealthHandler struct {
 	fx.In
 
-	Handler health.Handler `name:"x_healthcheck"`
+	Handler *health.Handler `name:"x_healthcheck"`
 }
 
 // Config holds health check configuration.
@@ -118,7 +118,8 @@ func RegisterHealthChecks(h HealthHandler, checks ChecksMappings, logger xlog.Op
 
 // NewHealth create a new healthChecker and register the available checks.
 func NewHealth() HealthHandlerQualifier {
+	h := health.NewHandler()
 	return HealthHandlerQualifier{
-		Handler: health.NewHandler(),
+		Handler: &h,
 	}
 }
