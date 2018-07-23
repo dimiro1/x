@@ -62,6 +62,6 @@ func LoadConfig() *Config {
 // NewLogger returns a new logger configured with values from *Config.
 func NewLogger(config *Config) LoggerMapping {
 	return LoggerMapping{
-		Logger: log.New(os.Stdout, config.Prefix, log.LstdFlags|log.Llongfile|log.Lmicroseconds),
+		Logger: log.New(os.Stdout, config.Prefix, log.LstdFlags|log.Lshortfile|log.Lmicroseconds),
 	}
 }
