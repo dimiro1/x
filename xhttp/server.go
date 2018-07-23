@@ -24,31 +24,11 @@ package xhttp
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/dimiro1/x/xlog"
-	"github.com/dimiro1/x/xutils"
 	"github.com/gorilla/mux"
 	"go.uber.org/fx"
 )
-
-// Config holds server configuration
-type Config struct {
-	Addr         string
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
-	IdleTimeout  time.Duration
-}
-
-// LoadConfig create a new *Config and populate it with values from environment.
-func LoadConfig() *Config {
-	return &Config{
-		Addr:         xutils.GetenvDefault("X_SERVER_ADDR", ":8080"),
-		ReadTimeout:  time.Second * 5,
-		WriteTimeout: time.Second * 5,
-		IdleTimeout:  time.Second * 60,
-	}
-}
 
 // HTTPServerQualifier is necessary to give a name to the server
 type HTTPServerQualifier struct {

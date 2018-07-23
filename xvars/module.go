@@ -22,30 +22,8 @@
 package xvars
 
 import (
-	"fmt"
-	"strings"
-
 	"go.uber.org/fx"
 )
-
-// Config hold the Expvar config.
-type Config struct {
-	Path string
-}
-
-// Option used to update config values
-type Option func(*Config)
-
-func Path(path string) Option {
-	return Option(func(c *Config) {
-
-		if !strings.HasPrefix(path, "/") {
-			path = fmt.Sprintf("/%s", path)
-		}
-
-		c.Path = path
-	})
-}
 
 // Module constructs the xvars module
 // receives a set of Options and apply them into a newly created config.

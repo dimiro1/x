@@ -19,33 +19,28 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// xtemplate provides html/templates
-//
-// this module is different from the others because, this one uses a static configuration into the module itself and
-// does not load configs from env vars, I have made this decision because usually the location of templates is defined at
-// compilation time and not at runtime.
-package xtemplate
+package xvars
 
 import (
-	"go.uber.org/fx"
+	"fmt"
+	"strings"
 )
 
-// Module provides a html/template fully configured.
-//
-// fx.New(xtemplate.Module(xtemplate.RootDir("./templates")))
-func Module(options ...Option) fx.Option {
-	cfg := &Config{
-		RootDir:   "templates",
-		Extension: ".html",
-	}
+// Config hold the Expvar config.
+type Config struct {
+	Path string
+}
 
-	for _, option := range options {
-		option(cfg)
-	}
+// Option used to update config values
+type Option func(*Config)
 
-	return fx.Options(
-		fx.Provide(
-			NewTemplate(cfg),
-		),
-	)
+func Path(path string) Option {
+	return Option(func(c *Config) {
+
+		if !strings.HasPrefix(path, "/") {
+			path = fmt.Sprintf("/%s", path)
+		}
+
+		c.Path = path
+	})
 }

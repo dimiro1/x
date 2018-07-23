@@ -22,15 +22,11 @@
 package xhealth
 
 import (
-	"fmt"
 	"net/http"
-	"strings"
-
-	"github.com/dimiro1/x/xhttp"
-	"github.com/dimiro1/x/xlog"
-	"github.com/dimiro1/x/xutils"
 
 	"github.com/dimiro1/health"
+	"github.com/dimiro1/x/xhttp"
+	"github.com/dimiro1/x/xlog"
 	"go.uber.org/fx"
 )
 
@@ -59,24 +55,6 @@ type HealthHandler struct {
 	fx.In
 
 	Handler *health.Handler `name:"x_healthcheck"`
-}
-
-// Config holds health check configuration.
-type Config struct {
-	Path string
-}
-
-// LoadConfig create a new *Config and populate it with values from environment.
-func LoadConfig() *Config {
-	path := xutils.GetenvDefault("X_HEALTH_PATH", "/status")
-
-	if !strings.HasPrefix(path, "/") {
-		path = fmt.Sprintf("/%s", path)
-	}
-
-	return &Config{
-		Path: path,
-	}
 }
 
 // ChecksMappings hold all checks registered by the container.

@@ -19,33 +19,29 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// xtemplate provides html/templates
-//
-// this module is different from the others because, this one uses a static configuration into the module itself and
-// does not load configs from env vars, I have made this decision because usually the location of templates is defined at
-// compilation time and not at runtime.
-package xtemplate
+package xhealth
 
 import (
-	"go.uber.org/fx"
+	"fmt"
+	"strings"
+
+	"github.com/dimiro1/x/xutils"
 )
 
-// Module provides a html/template fully configured.
-//
-// fx.New(xtemplate.Module(xtemplate.RootDir("./templates")))
-func Module(options ...Option) fx.Option {
-	cfg := &Config{
-		RootDir:   "templates",
-		Extension: ".html",
+// Config holds health check configuration.
+type Config struct {
+	Path string
+}
+
+// LoadConfig create a new *Config and populate it with values from environment.
+func LoadConfig() *Config {
+	path := xutils.GetenvDefault("X_HEALTH_PATH", "/status")
+
+	if !strings.HasPrefix(path, "/") {
+		path = fmt.Sprintf("/%s", path)
 	}
 
-	for _, option := range options {
-		option(cfg)
+	return &Config{
+		Path: path,
 	}
-
-	return fx.Options(
-		fx.Provide(
-			NewTemplate(cfg),
-		),
-	)
 }

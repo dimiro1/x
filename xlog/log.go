@@ -25,14 +25,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/dimiro1/x/xutils"
 	"go.uber.org/fx"
 )
-
-// Config holds log configuration
-type Config struct {
-	Prefix string
-}
 
 type LoggerMapping struct {
 	fx.Out
@@ -52,11 +46,6 @@ type OptionalLogger struct {
 // IsProvided returns true if l.OptionalLogger is not nil
 func IsProvided(l OptionalLogger) bool {
 	return l.Logger != nil
-}
-
-// LoadConfig create a new *Config and populate it with values from environment.
-func LoadConfig() *Config {
-	return &Config{Prefix: xutils.GetenvDefault("XLOG_PREFIX", "[X] ")}
 }
 
 // NewLogger returns a new logger configured with values from *Config.
