@@ -33,9 +33,11 @@ import (
 // easy health checks declarations, a few common used middleware.
 //
 // If you want a more configurable solution, just import the modules that you need to use.
-var Module = fx.Options(
-	xhealth.Module,
-	xhttp.Module,
-	xlog.Module,
-	xvars.Module(),
-)
+func Module() fx.Option {
+	return fx.Options(
+		xhealth.Module(),
+		xhttp.Module(),
+		xlog.Module(),
+		xvars.Module(),
+	)
+}

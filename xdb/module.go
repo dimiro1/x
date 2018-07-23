@@ -27,10 +27,12 @@ import (
 
 // Module provides an *sql.DB properly configured with values from env vars
 // it also register itself in the health check module.
-var Module = fx.Options(
-	fx.Provide(
-		NewDB,
-		DBHealthCheck,
-		LoadConfig,
-	),
-)
+func Module() fx.Option {
+	return fx.Options(
+		fx.Provide(
+			NewDB,
+			DBHealthCheck,
+			LoadConfig,
+		),
+	)
+}

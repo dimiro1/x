@@ -25,13 +25,15 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Options(
-	fx.Provide(
-		NewHealth,
-		ProvideRouteMapping,
-		LoadConfig,
-	),
-	fx.Invoke(
-		RegisterHealthChecks,
-	),
-)
+func Module() fx.Option {
+	return fx.Options(
+		fx.Provide(
+			NewHealth,
+			ProvideRouteMapping,
+			LoadConfig,
+		),
+		fx.Invoke(
+			RegisterHealthChecks,
+		),
+	)
+}

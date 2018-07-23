@@ -25,15 +25,17 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Options(
-	fx.Provide(
-		NewCompress,
-		NewHTTPServer,
-		NewEmptyRouter,
-		LoadConfig,
-	),
-	fx.Invoke(
-		RegisterRouteMappings,
-		registerStartStop,
-	),
-)
+func Module() fx.Option {
+	return fx.Options(
+		fx.Provide(
+			NewCompress,
+			NewHTTPServer,
+			NewEmptyRouter,
+			LoadConfig,
+		),
+		fx.Invoke(
+			RegisterRouteMappings,
+			registerStartStop,
+		),
+	)
+}

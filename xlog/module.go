@@ -25,9 +25,11 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Options(
-	fx.Provide(
-		LoadConfig,
-		NewLogger,
-	),
-)
+func Module() fx.Option {
+	return fx.Options(
+		fx.Provide(
+			LoadConfig,
+			NewLogger,
+		),
+	)
+}
