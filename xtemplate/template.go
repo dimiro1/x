@@ -28,6 +28,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/dimiro1/x/xlog"
 	"go.uber.org/fx"
 )
 
@@ -38,7 +39,7 @@ type TemplateQualifier struct {
 	Template *template.Template `name:"x_template"`
 }
 
-// Template ir necessary to access the template by name
+// Template is necessary to access the template by name
 type Template struct {
 	fx.In
 
@@ -46,12 +47,16 @@ type Template struct {
 }
 
 // NewTemplate creates a new html/template with templates in config dir and given functions registered by the FuncMapMappings
-func NewTemplate(config *Config) func(funcs FuncMapMappings) (TemplateQualifier, error) {
-	return func(funcs FuncMapMappings) (TemplateQualifier, error) {
+func NewTemplate(config *Config) func(funcs FuncMapMappings, logger xlog.OptionalLogger) (TemplateQualifier, error) {
+	return func(funcs FuncMapMappings, logger xlog.OptionalLogger) (TemplateQualifier, error) {
 		funcMap := template.FuncMap{}
 
 		// converts the FuncMapMappings into a template.FuncMap
 		for _, f := range funcs.Functions {
+			if xlog.IsProvided(logger) {
+				logger.Logger.Printf("registering template function `%s`", f.Name)
+			}
+
 			funcMap[f.Name] = f.Func
 		}
 

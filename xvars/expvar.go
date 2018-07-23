@@ -23,30 +23,20 @@ package xvars
 
 import (
 	"expvar"
-	"github.com/dimiro1/x/xhttp"
-	"github.com/dimiro1/x/xutils"
 	"net/http"
+
+	"github.com/dimiro1/x/xhttp"
 )
 
-// Config hold the Expvar config.
-type Config struct {
-	Path string
-}
-
-// LoadConfig create a new *Config and populate it with values from environment.
-func LoadConfig() *Config {
-	return &Config{
-		Path: xutils.GetenvDefault("DEBUG_VARS_PATH", "/debug/vars"),
-	}
-}
-
-// Expvar exposes expvar package
-func Expvar(cfg *Config) xhttp.RouteMapping {
-	return xhttp.RouteMapping{
-		Route: &xhttp.Route{
-			Path:    cfg.Path,
-			Method:  http.MethodGet,
-			Handler: expvar.Handler(),
-		},
+// Expvar exposes and http endpoint to xhttp.
+func Expvar(cfg *Config) func() xhttp.RouteMapping {
+	return func() xhttp.RouteMapping {
+		return xhttp.RouteMapping{
+			Route: &xhttp.Route{
+				Path:    cfg.Path,
+				Method:  http.MethodGet,
+				Handler: expvar.Handler(),
+			},
+		}
 	}
 }

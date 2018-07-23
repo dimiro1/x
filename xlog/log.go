@@ -40,20 +40,28 @@ type LoggerMapping struct {
 	Logger *log.Logger `name:"x_logger"`
 }
 
-type Logger struct {
+// OptionalLogger holds the injected and named 'x_logger' *log.Logger.
+// Keep in mind that as it is a optional dependency, it can be nil.
+// There is a helper method IsProvided in this same package that you can check if the value was provided or not.
+type OptionalLogger struct {
 	fx.In
 
-	Logger *log.Logger `name:"x_logger"`
+	Logger *log.Logger `name:"x_logger" optional:"true"`
+}
+
+// IsProvided returns true if l.OptionalLogger is not nil
+func IsProvided(l OptionalLogger) bool {
+	return l.Logger != nil
 }
 
 // LoadConfig create a new *Config and populate it with values from environment.
 func LoadConfig() *Config {
-	return &Config{Prefix: xutils.GetenvDefault("LOG_PREFIX", "[SERVER] ")}
+	return &Config{Prefix: xutils.GetenvDefault("XLOG_PREFIX", "[X] ")}
 }
 
 // NewLogger returns a new logger configured with values from *Config.
 func NewLogger(config *Config) LoggerMapping {
 	return LoggerMapping{
-		Logger: log.New(os.Stdout, config.Prefix, log.LstdFlags|log.Lshortfile|log.Lmicroseconds),
+		Logger: log.New(os.Stdout, config.Prefix, log.LstdFlags|log.Llongfile|log.Lmicroseconds),
 	}
 }

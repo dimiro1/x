@@ -25,16 +25,17 @@ import (
 	"github.com/dimiro1/x/xhealth"
 	"github.com/dimiro1/x/xhttp"
 	"github.com/dimiro1/x/xlog"
+	"github.com/dimiro1/x/xvars"
 	"go.uber.org/fx"
 )
 
 // Module x provide an all in one experience, providing a ready to use HTTP Server,
 // easy health checks declarations, a few common used middleware.
 //
-// If you want a more configurable solution, just import the modules that you need to use, just keep in mind
-// that most of them rely on the log module, making it a kind of required dependency.
+// If you want a more configurable solution, just import the modules that you need to use.
 var Module = fx.Options(
 	xhealth.Module,
-	xlog.Module,
 	xhttp.Module,
+	xlog.Module,
+	xvars.Module(),
 )

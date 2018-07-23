@@ -27,7 +27,9 @@
 package xtemplate
 
 import (
+	"fmt"
 	"go.uber.org/fx"
+	"strings"
 )
 
 // Config holds module config
@@ -49,6 +51,11 @@ func RootDir(rootDir string) Option {
 // Extension option to set the Extension value on the Config struct.
 func Extension(ext string) Option {
 	return Option(func(m *Config) {
+
+		if !strings.HasPrefix(ext, ".") {
+			ext = fmt.Sprintf(".%s", ext)
+		}
+
 		m.Extension = ext
 	})
 }

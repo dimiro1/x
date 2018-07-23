@@ -43,7 +43,7 @@ type Config struct {
 // LoadConfig create a new *Config and populate it with values from environment.
 func LoadConfig() *Config {
 	return &Config{
-		Addr:         xutils.GetenvDefault("SERVER_ADDR", ":8080"),
+		Addr:         xutils.GetenvDefault("X_SERVER_ADDR", ":8080"),
 		ReadTimeout:  time.Second * 5,
 		WriteTimeout: time.Second * 5,
 		IdleTimeout:  time.Second * 60,
@@ -65,19 +65,23 @@ type HTTPServer struct {
 }
 
 // Start starts the Server.
-func Start(_ context.Context, server HTTPServer, logger xlog.Logger) error {
-	logger.Logger.Printf("starting server on %s", server.Server.Addr)
+func Start(_ context.Context, server HTTPServer, logger xlog.OptionalLogger) error {
+	if xlog.IsProvided(logger) {
+		logger.Logger.Printf("starting server on %s", server.Server.Addr)
+	}
 	return server.Server.ListenAndServe()
 }
 
 // Stop stop the Server
-func Stop(ctx context.Context, server HTTPServer, logger xlog.Logger) error {
-	logger.Logger.Printf("stopping server on %s", server.Server.Addr)
+func Stop(ctx context.Context, server HTTPServer, logger xlog.OptionalLogger) error {
+	if xlog.IsProvided(logger) {
+		logger.Logger.Printf("stopping server on %s", server.Server.Addr)
+	}
 	return server.Server.Shutdown(ctx)
 }
 
 // registerStartStop knows how to registerStartStop the server in the container lifecycle.
-func registerStartStop(lc fx.Lifecycle, server HTTPServer, logger xlog.Logger) {
+func registerStartStop(lc fx.Lifecycle, server HTTPServer, logger xlog.OptionalLogger) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go Start(ctx, server, logger)
@@ -95,10 +99,16 @@ func NewEmptyRouter() *mux.Router {
 }
 
 // RegisterRouteMappings register the given routes.
-func RegisterRouteMappings(router *mux.Router, routes RouteMappings, logger xlog.Logger) {
-	logger.Logger.Println("registering routes")
+func RegisterRouteMappings(router *mux.Router, routes RouteMappings, logger xlog.OptionalLogger) {
+	if xlog.IsProvided(logger) {
+		logger.Logger.Println("registering routes")
+	}
+
 	for _, aRoute := range routes.Routes {
-		logger.Logger.Printf("registering %s", aRoute)
+		if xlog.IsProvided(logger) {
+			logger.Logger.Printf("registering %s", aRoute)
+		}
+
 		localRouter := router.NewRoute().Subrouter()
 
 		// Applying middleware
@@ -109,7 +119,10 @@ func RegisterRouteMappings(router *mux.Router, routes RouteMappings, logger xlog
 		// Registering the handler
 		localRouter.Handle(aRoute.Path, aRoute.Handler).Methods(aRoute.Method)
 	}
-	logger.Logger.Println("finished registering routes")
+
+	if xlog.IsProvided(logger) {
+		logger.Logger.Println("finished registering routes")
+	}
 }
 
 // NewHTTPServer returns a *http.Server with timeouts configured by *Config.

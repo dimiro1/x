@@ -31,4 +31,7 @@ var Module = fx.Options(
 		ProvideRouteMapping,
 		LoadConfig,
 	),
+	fx.Invoke(
+		RegisterHealthChecks,
+	),
 )

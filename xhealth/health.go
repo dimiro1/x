@@ -68,7 +68,7 @@ type Config struct {
 
 // LoadConfig create a new *Config and populate it with values from environment.
 func LoadConfig() *Config {
-	path := xutils.GetenvDefault("HEALTH_PATH", "/status")
+	path := xutils.GetenvDefault("X_HEALTH_PATH", "/status")
 
 	if !strings.HasPrefix(path, "/") {
 		path = fmt.Sprintf("/%s", path)
@@ -97,18 +97,28 @@ func ProvideRouteMapping(c HealthHandler, cfg *Config) xhttp.RouteMapping {
 	}
 }
 
-// NewHealth create a new healthChecker and register the available checks.
-func NewHealth(checks ChecksMappings, logger xlog.Logger) HealthHandlerQualifier {
-	h := health.NewHandler()
-
-	logger.Logger.Println("registering health checks")
-	for _, c := range checks.Checks {
-		logger.Logger.Printf("registering health %s", c.Name)
-		h.AddChecker(c.Name, c.Checker)
+// RegisterHealthChecks register the checks populated in ChecksMappings.
+func RegisterHealthChecks(h HealthHandler, checks ChecksMappings, logger xlog.OptionalLogger) {
+	if xlog.IsProvided(logger) {
+		logger.Logger.Println("registering health checks")
 	}
-	logger.Logger.Println("finished registering health checks")
 
+	for _, c := range checks.Checks {
+		if xlog.IsProvided(logger) {
+			logger.Logger.Printf("registering health %s", c.Name)
+		}
+
+		h.Handler.AddChecker(c.Name, c.Checker)
+	}
+
+	if xlog.IsProvided(logger) {
+		logger.Logger.Println("finished registering health checks")
+	}
+}
+
+// NewHealth create a new healthChecker and register the available checks.
+func NewHealth() HealthHandlerQualifier {
 	return HealthHandlerQualifier{
-		Handler: h,
+		Handler: health.NewHandler(),
 	}
 }
