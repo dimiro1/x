@@ -28,6 +28,8 @@ import (
 func Module() fx.Option {
 	return fx.Options(
 		fx.Provide(LoadConfig),
-		fx.Invoke(registerPrint),
+		fx.Invoke(func(cfg *Config) error {
+			return Banner(cfg)
+		}),
 	)
 }

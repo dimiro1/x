@@ -22,7 +22,6 @@
 package xenv
 
 import (
-	"github.com/dimiro1/x/xlog"
 	"github.com/subosito/gotenv"
 	"go.uber.org/fx"
 	"os"
@@ -30,19 +29,12 @@ import (
 
 // Module loads a .env file if present.
 //
-// Important! have to be the first module to be imported.
+// Important! have to be the first module to be imported and cannot have any other dependencies.
 func Module() fx.Option {
 	return fx.Options(
-		fx.Invoke(func(logger xlog.OptionalLogger) error {
-			if xlog.IsProvided(logger) {
-				logger.Logger.Println("loading .env file")
-			}
+		fx.Invoke(func() error {
 			err := gotenv.Load()
 			if os.IsNotExist(err) {
-				if xlog.IsProvided(logger) {
-					logger.Logger.Println(".env file not found")
-				}
-				
 				return nil
 			}
 

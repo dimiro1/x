@@ -22,12 +22,10 @@
 package xbanner
 
 import (
-	"context"
 	"os"
 
 	"github.com/dimiro1/banner"
 	"github.com/mattn/go-colorable"
-	"go.uber.org/fx"
 )
 
 func Banner(cfg *Config) error {
@@ -47,13 +45,4 @@ func Banner(cfg *Config) error {
 
 	banner.Init(colorable.NewColorableStdout(), cfg.IsEnabled, cfg.IsColorEnabled, in)
 	return nil
-}
-
-// registerPrint knows how to show the banner at the right time
-func registerPrint(lc fx.Lifecycle, cfg *Config) {
-	lc.Append(fx.Hook{
-		OnStart: func(ctx context.Context) error {
-			return Banner(cfg)
-		},
-	})
 }

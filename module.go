@@ -40,9 +40,9 @@ func Module() fx.Option {
 		// Have to be the first module to be loaded
 		xenv.Module(),
 		xbanner.Module(),
+		xlog.Module(),
 		xhealth.Module(),
 		xhttp.Module(),
-		xlog.Module(),
 		xvars.Module(),
 	)
 }

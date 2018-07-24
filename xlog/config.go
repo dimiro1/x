@@ -32,5 +32,5 @@ type Config struct {
 
 // LoadConfig create a new *Config and populate it with values from environment.
 func LoadConfig() *Config {
-	return &Config{Prefix: xutils.GetenvDefault("XLOG_PREFIX", "[X] ")}
+	return &Config{Prefix: xutils.GetenvDefault("X_LOG_PREFIX", "[X] ")}
 }
