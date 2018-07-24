@@ -2,63 +2,9 @@
 
 X is a set of modules that make creating HTTP servers fun again.
 
-```go
-package main
+# Example
 
-import (
-	"io"
-	"net/http"
-
-	"github.com/dimiro1/health/url"
-	"github.com/dimiro1/x"
-	"github.com/dimiro1/x/xhealth"
-	"github.com/dimiro1/x/xhttp"
-	"github.com/dimiro1/x/xvars"
-	"go.uber.org/fx"
-)
-
-type IndexMiddleware struct {
-	fx.In
-
-	Compress xhttp.Middleware `name:"x_compress_middleware"`
-}
-
-// Handler using the compress middleware
-func Index(indexMiddleware IndexMiddleware) xhttp.RouteMapping {
-	return xhttp.RouteMapping{
-		Route: &xhttp.Route{
-			Path:   "/",
-			Method: http.MethodGet,
-			Middleware: []xhttp.Middleware{
-				indexMiddleware.Compress,
-			},
-			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				io.WriteString(w, "Index Page")
-			}),
-		},
-	}
-}
-
-func GoogleHealthCheck() xhealth.CheckMapping {
-	return xhealth.CheckMapping{
-		Checker: &xhealth.Checker{
-			Name:    "google",
-			Checker: url.NewChecker("http://www.google.com"),
-		},
-	}
-}
-
-func main() {
-	fx.New(
-		x.Module,
-		xvars.Module,
-		fx.Provide(
-			Index,
-			GoogleHealthCheck,
-		),
-	).Run()
-}
-```
+See: https://github.com/dimiro1/x-example
 
 # The name
 
