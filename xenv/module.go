@@ -19,30 +19,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package x
+package xenv
 
 import (
-	"github.com/dimiro1/x/xbanner"
-	"github.com/dimiro1/x/xenv"
-	"github.com/dimiro1/x/xhealth"
-	"github.com/dimiro1/x/xhttp"
 	"github.com/dimiro1/x/xlog"
-	"github.com/dimiro1/x/xvars"
+	"github.com/subosito/gotenv"
 	"go.uber.org/fx"
 )
 
-// Module x provide an all in one experience, providing a ready to use HTTP Server,
-// easy health checks declarations, a few common used middleware.
+// Module loads a .env file if present.
 //
-// If you want a more configurable solution, just import the modules that you need to use.
+// Important! have to be the first module to be imported.
 func Module() fx.Option {
 	return fx.Options(
-		// Have to be the first module to be loaded
-		xenv.Module(),
-		xbanner.Module(),
-		xhealth.Module(),
-		xhttp.Module(),
-		xlog.Module(),
-		xvars.Module(),
+		fx.Invoke(func(logger xlog.OptionalLogger) error {
+			if xlog.IsProvided(logger) {
+				logger.Logger.Println("loading .env file")
+			}
+			return gotenv.Load()
+		}),
 	)
 }

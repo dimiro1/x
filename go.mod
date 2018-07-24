@@ -7,6 +7,7 @@ require (
 	github.com/gorilla/mux v1.6.2
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.3 // indirect
+	github.com/subosito/gotenv v1.1.1 // indirect
 	go.uber.org/atomic v1.3.2 // indirect
 	go.uber.org/dig v1.3.0 // indirect
 	go.uber.org/fx v1.6.0
