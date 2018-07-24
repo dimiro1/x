@@ -28,7 +28,7 @@ import (
 )
 
 // DBHealthCheck register a health check for the database.
-// offically it suports only mysql, postgres and mysql. however it try to register the unknown anyways.
+// officially it supports only mysql, postgres and mysql. however it try to register the unknown anyways.
 func DBHealthCheck(cfg *Config, db DB, logger xlog.OptionalLogger) xhealth.CheckMapping {
 	var checker healthDB.Checker
 
@@ -47,7 +47,7 @@ func DBHealthCheck(cfg *Config, db DB, logger xlog.OptionalLogger) xhealth.Check
 
 		checker = healthDB.NewChecker(
 			"SELECT 1",
-			`SELECT "DONT KNOW HOW TO GET THE DATABASE VERSION"`,
+			"",
 			db.DB,
 		)
 	}
