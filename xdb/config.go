@@ -32,10 +32,11 @@ import (
 
 // Config holds options to configure the database sql.DB pool of connections
 type Config struct {
-	// DriverNams can be one of sqlite, mysql or postgres
+	// DriverName can be one of sqlite, mysql or postgres
 	DriverName string
 	DSN        string
 
+	// They are optional, that's why they are pointers
 	MaxIdleConns    *int
 	MaxOpenConns    *int
 	ConnMaxLifetime *time.Duration

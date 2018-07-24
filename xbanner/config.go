@@ -32,11 +32,9 @@ type Config struct {
 }
 
 func LoadConfig() *Config {
-	cfg := &Config{}
-
-	cfg.File = xutils.GetenvDefault("X_BANNER_FILE", "banner.txt")
-	cfg.IsEnabled = xutils.GetenvDefault("X_BANNER_ENABLED", "true") == "true"
-	cfg.IsColorEnabled = xutils.GetenvDefault("X_BANNER_COLOR_ENABLED", "true") == "true"
-
-	return cfg
+	return &Config{
+		File:           xutils.GetenvDefault("X_BANNER_FILE", "banner.txt"),
+		IsEnabled:      xutils.GetenvDefault("X_BANNER_ENABLED", "true") == "true",
+		IsColorEnabled: xutils.GetenvDefault("X_BANNER_COLOR_ENABLED", "true") == "true",
+	}
 }

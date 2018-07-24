@@ -1,40 +1,42 @@
 package xutils_test
 
 import (
-	"github.com/dimiro1/x/xutils"
 	"os"
 	"testing"
+
+	"github.com/dimiro1/x/xutils"
 )
 
 func Test_GetenvDefault(t *testing.T) {
-	type testCase struct {
-		Before   func(testCase)
+	//noinspection GoUnusedType
+	type scenario struct {
+		Before   func(scenario)
 		Key      string
 		Expected string
 		Default  string
 	}
 
-	cases := []testCase{
+	scenarios := []scenario{
 		{
-			Before: func(t testCase) {
+			Before: func(s scenario) {
 				os.Clearenv()
-				os.Setenv(t.Key, t.Expected)
+				os.Setenv(s.Key, s.Expected)
 			},
 			Key:      "SOME_KEY",
 			Expected: "HELLO",
 			Default:  "",
 		},
 		{
-			Before: func(t testCase) {
+			Before: func(s scenario) {
 				os.Clearenv()
-				os.Setenv(t.Key, t.Expected)
+				os.Setenv(s.Key, s.Expected)
 			},
 			Key:      "SOME_KEY",
 			Expected: "",
 			Default:  "",
 		},
 		{
-			Before: func(t testCase) {
+			Before: func(s scenario) {
 				os.Clearenv()
 			},
 			Key:      "SOME_KEY",
@@ -43,13 +45,13 @@ func Test_GetenvDefault(t *testing.T) {
 		},
 	}
 
-	for _, test := range cases {
-		t.Run(test.Key, func(t *testing.T) {
-			test.Before(test)
+	for _, aScenario := range scenarios {
+		t.Run(aScenario.Key, func(t *testing.T) {
+			aScenario.Before(aScenario)
 
-			got := xutils.GetenvDefault(test.Key, test.Default)
-			if got != test.Expected {
-				t.Errorf("expected %s, got %s", test.Expected, got)
+			got := xutils.GetenvDefault(aScenario.Key, aScenario.Default)
+			if got != aScenario.Expected {
+				t.Errorf("expected %s, got %s", aScenario.Expected, got)
 			}
 		})
 	}

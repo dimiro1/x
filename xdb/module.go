@@ -30,9 +30,9 @@ import (
 func Module() fx.Option {
 	return fx.Options(
 		fx.Provide(
+			LoadConfig,
 			NewDB,
 			DBHealthCheck,
-			LoadConfig,
 		),
 	)
 }
