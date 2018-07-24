@@ -25,6 +25,7 @@ import (
 	"github.com/dimiro1/x/xlog"
 	"github.com/subosito/gotenv"
 	"go.uber.org/fx"
+	"os"
 )
 
 // Module loads a .env file if present.
@@ -36,7 +37,16 @@ func Module() fx.Option {
 			if xlog.IsProvided(logger) {
 				logger.Logger.Println("loading .env file")
 			}
-			return gotenv.Load()
+			err := gotenv.Load()
+			if os.IsNotExist(err) {
+				if xlog.IsProvided(logger) {
+					logger.Logger.Println(".env file not found")
+				}
+				
+				return nil
+			}
+
+			return err
 		}),
 	)
 }
