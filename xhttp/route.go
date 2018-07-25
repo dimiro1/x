@@ -30,6 +30,10 @@ import (
 
 // Route holds everything the router needs to know to register a route into the container
 type Route struct {
+	// Priority The bigger, the sooner the route will be registered.
+	// Important: The order of Routes with the same priority is not guarantee.
+	Priority int
+
 	// Method HTTP Method which the route must accept
 	Method string
 
@@ -37,7 +41,8 @@ type Route struct {
 	// e.g: /hello/{name}
 	Path string
 
-	// Middleware a list of middleware that must be applied
+	// Middleware a list of middleware that must be applied,
+	// Important: Middleware are applied in the given order.
 	Middleware []Middleware
 
 	// Handler the standard go HTTP handler
@@ -46,7 +51,7 @@ type Route struct {
 
 // String returns a string representation of the route
 func (r *Route) String() string {
-	return fmt.Sprintf("%s %s", r.Method, r.Path)
+	return fmt.Sprintf("%s %s %d", r.Method, r.Path, r.Priority)
 }
 
 // RouteMapping Necessary to register more than one Route

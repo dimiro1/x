@@ -28,6 +28,7 @@ import (
 	"github.com/dimiro1/x/xlog"
 	"github.com/gorilla/mux"
 	"go.uber.org/fx"
+	"sort"
 )
 
 type HTTPServer = *http.Server
@@ -88,6 +89,10 @@ func RegisterRouteMappings(router Router, routes RouteMappings, logger xlog.Opti
 	if xlog.IsProvided(logger) {
 		logger.Logger.Println("registering routes")
 	}
+
+	sort.Slice(routes.Routes, func(i, j int) bool {
+		return routes.Routes[i].Priority > routes.Routes[j].Priority
+	})
 
 	for _, aRoute := range routes.Routes {
 		if xlog.IsProvided(logger) {
