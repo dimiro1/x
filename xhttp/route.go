@@ -63,3 +63,27 @@ type RouteMappings struct {
 
 	Routes []*Route `group:"x_route_mappings"`
 }
+
+type NotFound struct {
+	fx.In
+
+	Handler http.Handler `name:"x_not_found_route_mapping" optional:"true"`
+}
+
+type MethodNotAllowed struct {
+	fx.In
+
+	Handler http.Handler `name:"x_method_not_allowed_route_mapping" optional:"true"`
+}
+
+type NotFoundRouteMapping struct {
+	fx.Out
+
+	Handler http.Handler `name:"x_not_found_route_mapping" optional:"true"`
+}
+
+type MethodNotAllowedRouteMapping struct {
+	fx.Out
+
+	Handler http.Handler `name:"x_method_not_allowed_route_mapping" optional:"true"`
+}

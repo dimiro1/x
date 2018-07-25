@@ -30,34 +30,23 @@ import (
 	"go.uber.org/fx"
 )
 
-// HTTPServerQualifier is necessary to give a name to the server
-type HTTPServerQualifier struct {
-	fx.Out
-
-	Server *http.Server `name:"x_http_server"`
-}
-
-// HTTPServer ir necessary to access the server by name
-type HTTPServer struct {
-	fx.In
-
-	Server *http.Server `name:"x_http_server"`
-}
+type HTTPServer = *http.Server
+type Router = *mux.Router
 
 // Start starts the Server.
 func Start(_ context.Context, server HTTPServer, logger xlog.OptionalLogger) error {
 	if xlog.IsProvided(logger) {
-		logger.Logger.Printf("starting server on %s", server.Server.Addr)
+		logger.Logger.Printf("starting server on %s", server.Addr)
 	}
-	return server.Server.ListenAndServe()
+	return server.ListenAndServe()
 }
 
 // Stop stop the Server
 func Stop(ctx context.Context, server HTTPServer, logger xlog.OptionalLogger) error {
 	if xlog.IsProvided(logger) {
-		logger.Logger.Printf("stopping server on %s", server.Server.Addr)
+		logger.Logger.Printf("stopping server on %s", server.Addr)
 	}
-	return server.Server.Shutdown(ctx)
+	return server.Shutdown(ctx)
 }
 
 // registerStartStop knows how to registerStartStop the server in the container lifecycle.
@@ -74,12 +63,28 @@ func registerStartStop(lc fx.Lifecycle, server HTTPServer, logger xlog.OptionalL
 }
 
 // NewEmptyRouter creates a new HTTP server Mux and register the given routes.
-func NewEmptyRouter() *mux.Router {
+func NewEmptyRouter() Router {
 	return mux.NewRouter()
 }
 
+func RegisterSafeHandlers(router Router, notFound NotFound, methodNotAllowed MethodNotAllowed, logger xlog.OptionalLogger) {
+	if notFound.Handler != nil {
+		if xlog.IsProvided(logger) {
+			logger.Logger.Println("registering NotFoundHandler handler")
+		}
+		router.NotFoundHandler = notFound.Handler
+	}
+
+	if methodNotAllowed.Handler != nil {
+		if xlog.IsProvided(logger) {
+			logger.Logger.Println("registering MethodNotAllowedHandler handler")
+		}
+		router.MethodNotAllowedHandler = methodNotAllowed.Handler
+	}
+}
+
 // RegisterRouteMappings register the given routes.
-func RegisterRouteMappings(router *mux.Router, routes RouteMappings, logger xlog.OptionalLogger) {
+func RegisterRouteMappings(router Router, routes RouteMappings, logger xlog.OptionalLogger) {
 	if xlog.IsProvided(logger) {
 		logger.Logger.Println("registering routes")
 	}
@@ -106,14 +111,12 @@ func RegisterRouteMappings(router *mux.Router, routes RouteMappings, logger xlog
 }
 
 // NewHTTPServer returns a *http.Server with timeouts configured by *Config.
-func NewHTTPServer(cfg *Config, mux *mux.Router) HTTPServerQualifier {
-	return HTTPServerQualifier{
-		Server: &http.Server{
-			Handler:      mux,
-			Addr:         cfg.Addr,
-			ReadTimeout:  cfg.ReadTimeout,
-			WriteTimeout: cfg.WriteTimeout,
-			IdleTimeout:  cfg.IdleTimeout,
-		},
+func NewHTTPServer(cfg *Config, router Router) HTTPServer {
+	return &http.Server{
+		Handler:      func() *mux.Router { return router }(),
+		Addr:         cfg.Addr,
+		ReadTimeout:  cfg.ReadTimeout,
+		WriteTimeout: cfg.WriteTimeout,
+		IdleTimeout:  cfg.IdleTimeout,
 	}
 }

@@ -29,16 +29,16 @@ import (
 
 // DBHealthCheck register a health check for the database.
 // officially it supports only mysql, postgres and mysql. however it try to register the unknown anyways.
-func DBHealthCheck(cfg *Config, db DB, logger xlog.OptionalLogger) xhealth.CheckMapping {
+func DBHealthCheck(cfg *Config, db SqlDB, logger xlog.OptionalLogger) xhealth.CheckMapping {
 	var checker healthDB.Checker
 
 	switch cfg.DriverName {
 	case "sqlite3":
-		checker = healthDB.NewSqlite3Checker(db.DB)
+		checker = healthDB.NewSqlite3Checker(db)
 	case "postgres":
-		checker = healthDB.NewPostgreSQLChecker(db.DB)
+		checker = healthDB.NewPostgreSQLChecker(db)
 	case "mysql":
-		checker = healthDB.NewMySQLChecker(db.DB)
+		checker = healthDB.NewMySQLChecker(db)
 	default:
 		if xlog.IsProvided(logger) {
 			logger.Logger.Printf(
@@ -48,7 +48,7 @@ func DBHealthCheck(cfg *Config, db DB, logger xlog.OptionalLogger) xhealth.Check
 		checker = healthDB.NewChecker(
 			"SELECT 1",
 			"",
-			db.DB,
+			db,
 		)
 	}
 

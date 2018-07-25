@@ -30,6 +30,8 @@ import (
 	"go.uber.org/fx"
 )
 
+type HealthHandler = *health.Handler
+
 // Checker holds the name and a Checker function to be executed.
 type Checker struct {
 	Name    string
@@ -43,20 +45,6 @@ type CheckMapping struct {
 	Checker *Checker `group:"x_health"`
 }
 
-// HealthHandlerQualifier is necessary to give a name to the health check
-type HealthHandlerQualifier struct {
-	fx.Out
-
-	Handler *health.Handler `name:"x_healthcheck"`
-}
-
-// HealthHandler ir necessary to access the healthcheck by name
-type HealthHandler struct {
-	fx.In
-
-	Handler *health.Handler `name:"x_healthcheck"`
-}
-
 // ChecksMappings hold all checks registered by the container.
 type ChecksMappings struct {
 	fx.In
@@ -65,12 +53,12 @@ type ChecksMappings struct {
 }
 
 // ProvideRouteMapping provide and Server HTTP Route to be registered by the server module.
-func ProvideRouteMapping(c HealthHandler, cfg *Config) xhttp.RouteMapping {
+func ProvideRouteMapping(healthHandler HealthHandler, cfg *Config) xhttp.RouteMapping {
 	return xhttp.RouteMapping{
 		Route: &xhttp.Route{
 			Path:    cfg.Path,
 			Method:  http.MethodGet,
-			Handler: c.Handler,
+			Handler: healthHandler,
 		},
 	}
 }
@@ -86,7 +74,7 @@ func RegisterHealthChecks(h HealthHandler, checks ChecksMappings, logger xlog.Op
 			logger.Logger.Printf("registering health %s", c.Name)
 		}
 
-		h.Handler.AddChecker(c.Name, c.Checker)
+		h.AddChecker(c.Name, c.Checker)
 	}
 
 	if xlog.IsProvided(logger) {
@@ -95,9 +83,7 @@ func RegisterHealthChecks(h HealthHandler, checks ChecksMappings, logger xlog.Op
 }
 
 // NewHealth create a new healthChecker and register the available checks.
-func NewHealth() HealthHandlerQualifier {
+func NewHealth() HealthHandler {
 	h := health.NewHandler()
-	return HealthHandlerQualifier{
-		Handler: &h,
-	}
+	return &h
 }

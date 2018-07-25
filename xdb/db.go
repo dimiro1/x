@@ -23,26 +23,15 @@ package xdb
 
 import (
 	"database/sql"
-	"go.uber.org/fx"
 )
 
-type DB struct {
-	fx.In
-
-	DB *sql.DB `name:"x_sql_db"`
-}
-
-type DBQualifier struct {
-	fx.Out
-
-	DB *sql.DB `name:"x_sql_db"`
-}
+type SqlDB = *sql.DB
 
 // NewDB creates a sql.SB with the given config.
-func NewDB(cfg *Config) (DBQualifier, error) {
+func NewDB(cfg *Config) (SqlDB, error) {
 	db, err := sql.Open(cfg.DriverName, cfg.DSN)
 	if err != nil {
-		return DBQualifier{}, err
+		return nil, err
 	}
 
 	if cfg.MaxIdleConns != nil {
@@ -58,10 +47,8 @@ func NewDB(cfg *Config) (DBQualifier, error) {
 	}
 
 	if err := db.Ping(); err != nil {
-		return DBQualifier{}, err
+		return nil, err
 	}
 
-	return DBQualifier{
-		DB: db,
-	}, nil
+	return db, nil
 }

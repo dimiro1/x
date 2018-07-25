@@ -23,17 +23,10 @@ package xhttp
 
 import (
 	"github.com/gorilla/handlers"
-	"go.uber.org/fx"
 )
 
-type CompressQualifier struct {
-	fx.Out
+type CompressMiddleware = Middleware
 
-	Middleware Middleware `name:"x_compress_middleware"`
-}
-
-func NewCompress() CompressQualifier {
-	return CompressQualifier{
-		Middleware: handlers.CompressHandler,
-	}
+func NewCompressMiddleware() CompressMiddleware {
+	return handlers.CompressHandler
 }

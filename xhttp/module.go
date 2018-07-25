@@ -28,12 +28,13 @@ import (
 func Module() fx.Option {
 	return fx.Options(
 		fx.Provide(
-			NewCompress,
+			NewCompressMiddleware,
 			NewHTTPServer,
 			NewEmptyRouter,
 			LoadConfig,
 		),
 		fx.Invoke(
+			RegisterSafeHandlers,
 			RegisterRouteMappings,
 			registerStartStop,
 		),
