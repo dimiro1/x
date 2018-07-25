@@ -51,7 +51,7 @@ type Route struct {
 
 // String returns a string representation of the route
 func (r *Route) String() string {
-	return fmt.Sprintf("%s %s %d", r.Method, r.Path, r.Priority)
+	return fmt.Sprintf("Method: %s, Path: %s,  Priority: %d", r.Method, r.Path, r.Priority)
 }
 
 // RouteMapping Necessary to register more than one Route
