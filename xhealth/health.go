@@ -58,7 +58,7 @@ func ProvideRouteMapping(healthHandler HealthHandler, cfg *Config) xhttp.RouteMa
 		Route: &xhttp.Route{
 			Path:    cfg.Path,
 			Method:  http.MethodGet,
-			Handler: healthHandler,
+			Handler: *healthHandler,
 		},
 	}
 }
