@@ -31,23 +31,46 @@ import (
 	"sort"
 )
 
-type HTTPServer = *http.Server
-type Router = *mux.Router
+// HTTPServerQualifier is necessary to give a name to the server
+type HTTPServerQualifier struct {
+	fx.Out
+
+	Server *http.Server `name:"x_http_server"`
+}
+
+// HTTPServer ir necessary to access the server by name
+type HTTPServer struct {
+	fx.In
+
+	Server *http.Server `name:"x_http_server"`
+}
+
+type RouterQualifier struct {
+	fx.Out
+
+	Router *mux.Router `name:"x_http_router"`
+}
+
+type Router struct {
+	fx.In
+
+	Router *mux.Router `name:"x_http_router"`
+}
 
 // Start starts the Server.
 func Start(_ context.Context, server HTTPServer, logger xlog.OptionalLogger) error {
 	if xlog.IsProvided(logger) {
-		logger.Logger.Printf("starting server on %s", server.Addr)
+		logger.Logger.Printf("starting server on %s", server.Server.Addr)
 	}
-	return server.ListenAndServe()
+	return server.Server.ListenAndServe()
 }
 
 // Stop stop the Server
 func Stop(ctx context.Context, server HTTPServer, logger xlog.OptionalLogger) error {
 	if xlog.IsProvided(logger) {
-		logger.Logger.Printf("stopping server on %s", server.Addr)
+		logger.Logger.Printf("stopping server on %s", server.Server.Addr)
 	}
-	return server.Shutdown(ctx)
+	return server.Server.Shutdown(ctx)
 }
 
 // registerStartStop knows how to registerStartStop the server in the container lifecycle.
@@ -64,8 +87,10 @@ func registerStartStop(lc fx.Lifecycle, server HTTPServer, logger xlog.OptionalL
 }
 
 // NewEmptyRouter creates a new HTTP server Mux and register the given routes.
-func NewEmptyRouter() Router {
-	return mux.NewRouter()
+func NewEmptyRouter() RouterQualifier {
+	return RouterQualifier{
+		Router: mux.NewRouter(),
+	}
 }
 
 func RegisterSafeHandlers(router Router, notFound NotFound, methodNotAllowed MethodNotAllowed, logger xlog.OptionalLogger) {
@@ -73,14 +98,14 @@ func RegisterSafeHandlers(router Router, notFound NotFound, methodNotAllowed Met
 		if xlog.IsProvided(logger) {
 			logger.Logger.Println("registering NotFoundHandler handler")
 		}
-		router.NotFoundHandler = notFound.Handler
+		router.Router.NotFoundHandler = notFound.Handler
 	}
 
 	if methodNotAllowed.Handler != nil {
 		if xlog.IsProvided(logger) {
 			logger.Logger.Println("registering MethodNotAllowedHandler handler")
 		}
-		router.MethodNotAllowedHandler = methodNotAllowed.Handler
+		router.Router.MethodNotAllowedHandler = methodNotAllowed.Handler
 	}
 }
 
@@ -99,7 +124,7 @@ func RegisterRouteMappings(router Router, routes RouteMappings, logger xlog.Opti
 			logger.Logger.Printf("registering %s", aRoute)
 		}
 
-		localRouter := router.NewRoute().Subrouter()
+		localRouter := router.Router.NewRoute().Subrouter()
 
 		// Applying middleware
 		for _, m := range aRoute.Middleware {
@@ -116,12 +141,14 @@ func RegisterRouteMappings(router Router, routes RouteMappings, logger xlog.Opti
 }
 
 // NewHTTPServer returns a *http.Server with timeouts configured by *Config.
-func NewHTTPServer(cfg *Config, router Router) HTTPServer {
-	return &http.Server{
-		Handler:      func() *mux.Router { return router }(),
-		Addr:         cfg.Addr,
-		ReadTimeout:  cfg.ReadTimeout,
-		WriteTimeout: cfg.WriteTimeout,
-		IdleTimeout:  cfg.IdleTimeout,
+func NewHTTPServer(cfg *Config, router Router) HTTPServerQualifier {
+	return HTTPServerQualifier{
+		Server: &http.Server{
+			Handler:      router.Router,
+			Addr:         cfg.Addr,
+			ReadTimeout:  cfg.ReadTimeout,
+			WriteTimeout: cfg.WriteTimeout,
+			IdleTimeout:  cfg.IdleTimeout,
+		},
 	}
 }

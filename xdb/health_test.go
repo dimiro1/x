@@ -12,7 +12,9 @@ func TestDBHealthCheck_MySQL(t *testing.T) {
 		cfg = &Config{
 			DriverName: "mysql",
 		}
-		sqlDB = &sql.DB{}
+		sqlDB = DB{
+			DB: &sql.DB{},
+		}
 	)
 
 	mapping := DBHealthCheck(cfg, sqlDB, xlog.OptionalLogger{})
@@ -27,7 +29,9 @@ func TestDBHealthCheck_Postgres(t *testing.T) {
 		cfg = &Config{
 			DriverName: "postgres",
 		}
-		sqlDB = &sql.DB{}
+		sqlDB = DB{
+			DB: &sql.DB{},
+		}
 	)
 
 	mapping := DBHealthCheck(cfg, sqlDB, xlog.OptionalLogger{})
@@ -42,7 +46,9 @@ func TestDBHealthCheck_Sqlite3(t *testing.T) {
 		cfg = &Config{
 			DriverName: "sqlite3",
 		}
-		sqlDB = &sql.DB{}
+		sqlDB = DB{
+			DB: &sql.DB{},
+		}
 	)
 
 	mapping := DBHealthCheck(cfg, sqlDB, xlog.OptionalLogger{})
@@ -75,7 +81,9 @@ func TestDBHealthCheck_UnknownDriver(t *testing.T) {
 		cfg = &Config{
 			DriverName: "fake_driver",
 		}
-		sqlDB = &sql.DB{}
+		sqlDB = DB{
+			DB: &sql.DB{},
+		}
 	)
 
 	mapping := DBHealthCheck(cfg, sqlDB, xlog.OptionalLogger{})
