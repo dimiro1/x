@@ -47,26 +47,24 @@ type Template struct {
 }
 
 // NewTemplate creates a new html/template with templates in config dir and given functions registered by the FuncMapMappings
-func NewTemplate(config Config) func(funcs FuncMapMappings, logger xlog.OptionalLogger) (TemplateQualifier, error) {
-	return func(funcs FuncMapMappings, logger xlog.OptionalLogger) (TemplateQualifier, error) {
-		funcMap := template.FuncMap{}
+func NewTemplate(config Config, funcs FuncMapMappings, logger xlog.OptionalLogger) (TemplateQualifier, error) {
+	funcMap := template.FuncMap{}
 
-		// converts the FuncMapMappings into a template.FuncMap
-		for _, f := range funcs.Functions {
-			if xlog.IsProvided(logger) {
-				logger.Logger.Printf("registering template function `%s`", f.Name)
-			}
-
-			funcMap[f.Name] = f.Func
+	// converts the FuncMapMappings into a template.FuncMap
+	for _, f := range funcs.Functions {
+		if xlog.IsProvided(logger) {
+			logger.Logger.Printf("registering template function `%s`", f.Name)
 		}
 
-		// actual work
-		tmpl, err := parseTemplates(config.RootDir, funcMap, config.Extension)
-
-		return TemplateQualifier{
-			Template: tmpl,
-		}, err
+		funcMap[f.Name] = f.Func
 	}
+
+	// actual work
+	tmpl, err := parseTemplates(config.RootDir, funcMap, config.Extension)
+
+	return TemplateQualifier{
+		Template: tmpl,
+	}, err
 }
 
 // See: https://stackoverflow.com/questions/38686583/golang-parse-all-templates-in-directory-and-subdirectories/38688083
