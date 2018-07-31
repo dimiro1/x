@@ -25,7 +25,7 @@ import (
 	"github.com/dimiro1/health"
 )
 
-func Register(name string, checker health.Checker) CheckMapping {
+func NewCheckMapping(name string, checker health.Checker) CheckMapping {
 	return CheckMapping{
 		Checker: &Checker{
 			Name:    name,

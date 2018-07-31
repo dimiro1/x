@@ -21,7 +21,7 @@
 
 package xtemplate
 
-func Register(name string, fn interface{}) FuncMapping {
+func NewFuncMapping(name string, fn interface{}) FuncMapping {
 	return FuncMapping{
 		Func: &Func{
 			Name: name,
