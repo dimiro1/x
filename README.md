@@ -2,6 +2,10 @@
 
 X is a set of modules that make creating HTTP servers fun again.
 
+# Disclaimer
+
+DON'T USE THIS FOR PRODUCTION. THE API IS VERY UNSTABLE AND SUBJECT TO CHANGE.
+
 # Example
 
 See: https://github.com/dimiro1/x-example
