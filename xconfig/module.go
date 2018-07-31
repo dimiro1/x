@@ -29,11 +29,26 @@ import (
 )
 
 func LoadConfig() (config.Provider, error) {
-	c, err := config.NewYAML(
-		config.File("config.yml"),
+	in, err := os.Open("config.yml")
+	if in != nil {
+		defer in.Close()
+	}
+
+	// If the file is not there, just ignore
+	if os.IsNotExist(err) {
+		return config.NopProvider{}, nil
+	}
+
+	if err != nil {
+		return config.NopProvider{}, nil
+	}
+
+	cfg, err := config.NewYAML(
+		config.Source(in),
 		config.Expand(os.LookupEnv),
 	)
-	return c, err
+
+	return cfg, err
 }
 
 func Module() fx.Option {
