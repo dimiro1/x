@@ -22,19 +22,35 @@
 package xbanner
 
 import (
-	"github.com/dimiro1/x/xutils"
+	"go.uber.org/config"
+	"go.uber.org/fx"
 )
 
 type Config struct {
-	File           string
-	IsEnabled      bool
-	IsColorEnabled bool
+	File           string `yaml:"file"`
+	IsEnabled      bool   `yaml:"enabled"`
+	IsColorEnabled bool   `yaml:"color"`
 }
 
-func LoadConfig() *Config {
-	return &Config{
-		File:           xutils.GetenvDefault("X_BANNER_FILE", "banner.txt"),
-		IsEnabled:      xutils.GetenvDefault("X_BANNER_ENABLED", "true") == "true",
-		IsColorEnabled: xutils.GetenvDefault("X_BANNER_COLOR_ENABLED", "true") == "true",
+type LoadConfigParams struct {
+	fx.In
+
+	Provider config.Provider `optional:"true"`
+}
+
+func LoadConfig(params LoadConfigParams) (Config, error) {
+	c := Config{
+		File:           "banner.txt",
+		IsEnabled:      true,
+		IsColorEnabled: true,
 	}
+
+	if params.Provider != nil {
+		err := params.Provider.Get("xbanner").Populate(&c)
+		if err != nil {
+			return c, err
+		}
+	}
+
+	return c, nil
 }

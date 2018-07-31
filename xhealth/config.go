@@ -25,7 +25,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/dimiro1/x/xutils"
+	"go.uber.org/config"
+	"go.uber.org/fx"
 )
 
 // Config holds health check configuration.
@@ -33,15 +34,27 @@ type Config struct {
 	Path string
 }
 
-// LoadConfig create a new *Config and populate it with values from environment.
-func LoadConfig() *Config {
-	path := xutils.GetenvDefault("X_HEALTH_PATH", "/status")
+type LoadConfigParams struct {
+	fx.In
 
-	if !strings.HasPrefix(path, "/") {
-		path = fmt.Sprintf("/%s", path)
+	Provider config.Provider `optional:"true"`
+}
+
+func LoadConfig(params LoadConfigParams) (Config, error) {
+	cfg := Config{
+		Path: "/status",
 	}
 
-	return &Config{
-		Path: path,
+	if params.Provider != nil {
+		err := params.Provider.Get("xhealth").Populate(&cfg)
+		if err != nil {
+			return cfg, err
+		}
 	}
+
+	if !strings.HasPrefix(cfg.Path, "/") {
+		cfg.Path = fmt.Sprintf("/%s", cfg.Path)
+	}
+
+	return cfg, nil
 }

@@ -29,7 +29,7 @@ import (
 )
 
 // Expvar exposes and http endpoint to xhttp.
-func Expvar(cfg *Config) func() xhttp.RouteMapping {
+func Expvar(cfg Config) func() xhttp.RouteMapping {
 	return func() xhttp.RouteMapping {
 		return xhttp.RouteMapping{
 			Route: &xhttp.Route{

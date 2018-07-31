@@ -140,15 +140,15 @@ func RegisterRouteMappings(router Router, routes RouteMappings, logger xlog.Opti
 	}
 }
 
-// NewHTTPServer returns a *http.Server with timeouts configured by *Config.
-func NewHTTPServer(cfg *Config, router Router) HTTPServerQualifier {
+// NewHTTPServer returns a *http.Server with timeouts configured by Config.
+func NewHTTPServer(cfg Config, router Router) HTTPServerQualifier {
 	return HTTPServerQualifier{
 		Server: &http.Server{
 			Handler:      router.Router,
 			Addr:         cfg.Addr,
-			ReadTimeout:  cfg.ReadTimeout,
-			WriteTimeout: cfg.WriteTimeout,
-			IdleTimeout:  cfg.IdleTimeout,
+			ReadTimeout:  cfg.Timeouts.Read,
+			WriteTimeout: cfg.Timeouts.Write,
+			IdleTimeout:  cfg.Timeouts.Idle,
 		},
 	}
 }

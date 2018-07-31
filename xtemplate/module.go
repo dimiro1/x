@@ -31,21 +31,11 @@ import (
 )
 
 // Module provides a html/template fully configured.
-//
-// fx.New(xtemplate.Module(xtemplate.RootDir("./templates")))
-func Module(options ...Option) fx.Option {
-	cfg := &Config{
-		RootDir:   "templates",
-		Extension: ".html",
-	}
-
-	for _, option := range options {
-		option(cfg)
-	}
-
+func Module() fx.Option {
 	return fx.Options(
 		fx.Provide(
-			NewTemplate(cfg),
+			LoadConfig,
+			NewTemplate,
 		),
 	)
 }

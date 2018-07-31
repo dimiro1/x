@@ -19,18 +19,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package xutils
+package xconfig
 
 import (
 	"os"
+
+	"go.uber.org/config"
+	"go.uber.org/fx"
 )
 
-// GetenvDefault helper to access environment values for return a default value if it is missing.
-func GetenvDefault(key, defaultValue string) string {
-	e := os.Getenv(key)
-	if e == "" {
-		e = defaultValue
-	}
+func LoadConfig() (config.Provider, error) {
+	c, err := config.NewYAML(
+		config.File("config.yml"),
+		config.Expand(os.LookupEnv),
+	)
+	return c, err
+}
 
-	return e
+func Module() fx.Option {
+	return fx.Options(
+		fx.Provide(LoadConfig),
+	)
 }

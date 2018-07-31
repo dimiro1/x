@@ -24,23 +24,44 @@ package xhttp
 import (
 	"time"
 
-	"github.com/dimiro1/x/xutils"
+	"go.uber.org/config"
+	"go.uber.org/fx"
 )
 
 // Config holds server configuration
 type Config struct {
-	Addr         string
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
-	IdleTimeout  time.Duration
+	Addr     string         `yaml:"addr"`
+	Timeouts ConfigTimeouts `yaml:"timeouts"`
 }
 
-// LoadConfig create a new *Config and populate it with values from environment.
-func LoadConfig() *Config {
-	return &Config{
-		Addr:         xutils.GetenvDefault("X_SERVER_ADDR", ":8080"),
-		ReadTimeout:  time.Second * 5,
-		WriteTimeout: time.Second * 5,
-		IdleTimeout:  time.Second * 60,
+type ConfigTimeouts struct {
+	Read  time.Duration `yaml:"read"`
+	Write time.Duration `yaml:"write"`
+	Idle  time.Duration `yaml:"idle"`
+}
+
+type LoadConfigParams struct {
+	fx.In
+
+	Provider config.Provider `optional:"true"`
+}
+
+func LoadConfig(params LoadConfigParams) (Config, error) {
+	cfg := Config{
+		Addr: ":8080",
+		Timeouts: ConfigTimeouts{
+			Read:  time.Second * 5,
+			Write: time.Second * 5,
+			Idle:  time.Second * 60,
+		},
 	}
+
+	if params.Provider != nil {
+		err := params.Provider.Get("xhttp").Populate(&cfg)
+		if err != nil {
+			return cfg, err
+		}
+	}
+
+	return cfg, nil
 }

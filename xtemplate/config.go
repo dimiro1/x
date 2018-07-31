@@ -22,34 +22,33 @@
 package xtemplate
 
 import (
-	"fmt"
-	"strings"
+	"go.uber.org/config"
+	"go.uber.org/fx"
 )
 
-// Config holds module config
 type Config struct {
-	RootDir   string
-	Extension string
+	RootDir   string `yaml:"root"`
+	Extension string `yaml:"extension"`
 }
 
-// Option used to update config values
-type Option func(*Config)
+type LoadConfigParams struct {
+	fx.In
 
-// RootDir option to set the RootDir value on the Config struct.
-func RootDir(rootDir string) Option {
-	return Option(func(m *Config) {
-		m.RootDir = rootDir
-	})
+	Provider config.Provider `optional:"true"`
 }
 
-// Extension option to set the Extension value on the Config struct.
-func Extension(ext string) Option {
-	return Option(func(m *Config) {
+func LoadConfig(params LoadConfigParams) (Config, error) {
+	cfg := Config{
+		RootDir:   "templates",
+		Extension: ".html",
+	}
 
-		if !strings.HasPrefix(ext, ".") {
-			ext = fmt.Sprintf(".%s", ext)
+	if params.Provider != nil {
+		err := params.Provider.Get("xtemplate").Populate(&cfg)
+		if err != nil {
+			return cfg, err
 		}
+	}
 
-		m.Extension = ext
-	})
+	return cfg, nil
 }

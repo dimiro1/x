@@ -28,7 +28,7 @@ import (
 func Module() fx.Option {
 	return fx.Options(
 		fx.Provide(LoadConfig),
-		fx.Invoke(func(cfg *Config) error {
+		fx.Invoke(func(cfg Config) error {
 			return Banner(cfg)
 		}),
 	)

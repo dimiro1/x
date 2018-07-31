@@ -27,18 +27,11 @@ import (
 
 // Module constructs the xvars module
 // receives a set of Options and apply them into a newly created config.
-func Module(options ...Option) fx.Option {
-	cfg := &Config{
-		Path: "/debug/vars",
-	}
-
-	for _, option := range options {
-		option(cfg)
-	}
-
+func Module() fx.Option {
 	return fx.Options(
 		fx.Provide(
-			Expvar(cfg),
+			LoadConfig,
+			Expvar,
 		),
 	)
 }

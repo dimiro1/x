@@ -45,17 +45,9 @@ func NewDB(cfg *Config) (DBQualifier, error) {
 		return DBQualifier{}, err
 	}
 
-	if cfg.MaxIdleConns != nil {
-		db.SetMaxIdleConns(*cfg.MaxIdleConns)
-	}
-
-	if cfg.MaxOpenConns != nil {
-		db.SetMaxOpenConns(*cfg.MaxOpenConns)
-	}
-
-	if cfg.ConnMaxLifetime != nil {
-		db.SetConnMaxLifetime(*cfg.ConnMaxLifetime)
-	}
+	db.SetMaxIdleConns(cfg.Connection.MaxIdle)
+	db.SetMaxOpenConns(cfg.Connection.MaxOpen)
+	db.SetConnMaxLifetime(cfg.Connection.MaxLifetime)
 
 	if err := db.Ping(); err != nil {
 		return DBQualifier{}, err

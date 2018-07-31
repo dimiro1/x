@@ -65,7 +65,7 @@ type ChecksMappings struct {
 }
 
 // ProvideRouteMapping provide and Server HTTP Route to be registered by the server module.
-func ProvideRouteMapping(c HealthHandler, cfg *Config) xhttp.RouteMapping {
+func ProvideRouteMapping(c HealthHandler, cfg Config) xhttp.RouteMapping {
 	return xhttp.RouteMapping{
 		Route: &xhttp.Route{
 			Path:    cfg.Path,

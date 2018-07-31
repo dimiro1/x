@@ -24,74 +24,56 @@ package xdb
 import (
 	"errors"
 
-	"github.com/dimiro1/x/xutils"
-	"os"
-	"strconv"
+	"go.uber.org/config"
+	"go.uber.org/fx"
 	"time"
 )
 
 // Config holds options to configure the database sql.DB pool of connections
 type Config struct {
 	// DriverName can be one of sqlite, mysql or postgres
-	DriverName string
-	DSN        string
-
-	// They are optional, that's why they are pointers
-	MaxIdleConns    *int
-	MaxOpenConns    *int
-	ConnMaxLifetime *time.Duration
+	DriverName string           `yaml:"driver"`
+	DSN        string           `yaml:"dsn"`
+	Connection ConfigConnection `yaml:"connection"`
 }
 
-// LoadConfig load configuration from env vars and create a new config struct to hold the values.
-//
-// X_DB_DRIVER_NAME sets the driver name, it is required;
-// X_DB_DSN sets the database connection dsn, it is required;
-// X_DB_MAX_IDLE_CONNS sets the max idle connections, it is not required;
-// X_DB_MAX_OPEN_CONNS sets the max open connections, it is not required;
-// X_DB_MAX_CONN_LIFETIME sets the connection lifetime, ot is not required.
-func LoadConfig() (*Config, error) {
-	var (
-		cfg        = &Config{}
-		driverName = xutils.GetenvDefault("X_DB_DRIVER_NAME", "")
-		dsn        = xutils.GetenvDefault("X_DB_DSN", "")
-	)
+type ConfigConnection struct {
+	MaxIdle     int           `yaml:"max_idle"`
+	MaxOpen     int           `yaml:"max_open"`
+	MaxLifetime time.Duration `yaml:"max_lifetime"`
+}
 
-	if driverName == "" {
-		return nil, errors.New("X_DB_DRIVER_NAME env var is required")
+type LoadConfigParams struct {
+	fx.In
+
+	Provider config.Provider `optional:"true"`
+}
+
+func LoadConfig(params LoadConfigParams) (*Config, error) {
+	cfg := &Config{
+		DriverName: "",
+		DSN:        "",
+		Connection: ConfigConnection{
+			MaxIdle:     0,
+			MaxLifetime: 0,
+			MaxOpen:     0,
+		},
 	}
 
-	if dsn == "" {
-		return nil, errors.New("X_DB_DSN env var is required")
-	}
-
-	if maxIdleConns, ok := os.LookupEnv("X_DB_MAX_IDLE_CONNS"); ok {
-		i, err := strconv.Atoi(maxIdleConns)
+	if params.Provider != nil {
+		err := params.Provider.Get("xdb").Populate(&cfg)
 		if err != nil {
 			return nil, err
 		}
-
-		cfg.MaxIdleConns = &i
 	}
 
-	if maxOpenConns, ok := os.LookupEnv("X_DB_MAX_OPEN_CONNS"); ok {
-		i, err := strconv.Atoi(maxOpenConns)
-		if err != nil {
-			return nil, err
-		}
-
-		cfg.MaxOpenConns = &i
+	if cfg.DriverName == "" {
+		return nil, errors.New("xdb.driver is required")
 	}
 
-	if connMaxLifetime, ok := os.LookupEnv("X_DB_MAX_CONN_LIFETIME"); ok {
-		d, err := time.ParseDuration(connMaxLifetime)
-		if err != nil {
-			return nil, err
-		}
-
-		cfg.ConnMaxLifetime = &d
+	if cfg.DSN == "" {
+		return nil, errors.New("xdb.dsn is required")
 	}
 
-	cfg.DriverName = driverName
-	cfg.DSN = dsn
 	return cfg, nil
 }

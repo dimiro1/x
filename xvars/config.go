@@ -22,25 +22,32 @@
 package xvars
 
 import (
-	"fmt"
-	"strings"
+	"go.uber.org/config"
+	"go.uber.org/fx"
 )
 
 // Config hold the Expvar config.
 type Config struct {
-	Path string
+	Path string `yaml:"path"`
 }
 
-// Option used to update config values
-type Option func(*Config)
+type LoadConfigParams struct {
+	fx.In
 
-func Path(path string) Option {
-	return Option(func(c *Config) {
+	Provider config.Provider `optional:"true"`
+}
 
-		if !strings.HasPrefix(path, "/") {
-			path = fmt.Sprintf("/%s", path)
+func LoadConfig(params LoadConfigParams) (Config, error) {
+	cfg := Config{
+		Path: "/debug/vars",
+	}
+
+	if params.Provider != nil {
+		err := params.Provider.Get("xvars").Populate(&cfg)
+		if err != nil {
+			return cfg, err
 		}
+	}
 
-		c.Path = path
-	})
+	return cfg, nil
 }

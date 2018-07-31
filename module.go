@@ -23,7 +23,7 @@ package x
 
 import (
 	"github.com/dimiro1/x/xbanner"
-	"github.com/dimiro1/x/xenv"
+	"github.com/dimiro1/x/xconfig"
 	"github.com/dimiro1/x/xhealth"
 	"github.com/dimiro1/x/xhttp"
 	"github.com/dimiro1/x/xlog"
@@ -37,8 +37,7 @@ import (
 // If you want a more configurable solution, just import the modules that you need to use.
 func Module() fx.Option {
 	return fx.Options(
-		// Have to be the first module to be loaded
-		xenv.Module(),
+		xconfig.Module(),
 		xbanner.Module(),
 		xlog.Module(),
 		xhealth.Module(),

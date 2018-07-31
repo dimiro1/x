@@ -22,15 +22,33 @@
 package xlog
 
 import (
-	"github.com/dimiro1/x/xutils"
+	"go.uber.org/config"
+	"go.uber.org/fx"
 )
 
 // Config holds log configuration
 type Config struct {
-	Prefix string
+	Prefix string `yaml:"prefix"`
+}
+
+type LoadConfigParams struct {
+	fx.In
+
+	Provider config.Provider `optional:"true"`
 }
 
 // LoadConfig create a new *Config and populate it with values from environment.
-func LoadConfig() *Config {
-	return &Config{Prefix: xutils.GetenvDefault("X_LOG_PREFIX", "[X] ")}
+func LoadConfig(params LoadConfigParams) (Config, error) {
+	cfg := Config{
+		Prefix: "[X] ",
+	}
+
+	if params.Provider != nil {
+		err := params.Provider.Get("xlog").Populate(&cfg)
+		if err != nil {
+			return cfg, err
+		}
+	}
+
+	return cfg, nil
 }

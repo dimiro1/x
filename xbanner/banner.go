@@ -28,7 +28,7 @@ import (
 	"github.com/mattn/go-colorable"
 )
 
-func Banner(cfg *Config) error {
+func Banner(cfg Config) error {
 	in, err := os.Open(cfg.File)
 	if in != nil {
 		defer in.Close()
