@@ -55,26 +55,26 @@ func Handle(method, path string, handler http.Handler, options ...func(*Route)) 
 	}
 }
 
-func Get(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
+func GET(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
 	return Handle(http.MethodGet, path, handler, options...)
 }
 
-func Post(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
+func POST(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
 	return Handle(http.MethodPost, path, handler, options...)
 }
 
-func Put(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
+func PUT(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
 	return Handle(http.MethodPut, path, handler, options...)
 }
 
-func Delete(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
+func DELETE(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
 	return Handle(http.MethodDelete, path, handler, options...)
 }
 
-func Options(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
+func OPTIONS(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
 	return Handle(http.MethodOptions, path, handler, options...)
 }
 
-func Patch(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
+func PATCH(path string, handler http.Handler, options ...func(*Route)) RouteMapping {
 	return Handle(http.MethodPatch, path, handler, options...)
 }
